@@ -1,7 +1,3 @@
-# SPEKT<img width="30" alt="portfolio_view" src="https://github.com/spekt8/spekt8/blob/master/dist/images/src/client/images/spekt8-logo-ecbc06d5.png">
-
-SPEKT8 is a new visualization tool for your Kubernetes clusters. It automatically builds logical topologies of your application and infrastructure, which enable your SRE and Ops team to intuitively understand, monitor, and control your containerized, microservices based application. Simply deploy our containerized application directly into your Kubernetes cluster. 
-
 # spekt8
 
 ## Le namespace
@@ -186,6 +182,9 @@ kubectl delete -k .
 
 
 
+# SPEKT<img width="30" alt="portfolio_view" src="https://github.com/spekt8/spekt8/blob/master/dist/images/src/client/images/spekt8-logo-ecbc06d5.png">
+
+SPEKT8 is a new visualization tool for your Kubernetes clusters. It automatically builds logical topologies of your application and infrastructure, which enable your SRE and Ops team to intuitively understand, monitor, and control your containerized, microservices based application. Simply deploy our containerized application directly into your Kubernetes cluster. 
 
 <img src="https://github.com/spekt8/spekt8/blob/master/spekt8-preview.gif" width="600" height="300" />
 
