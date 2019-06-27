@@ -2,6 +2,191 @@
 
 SPEKT8 is a new visualization tool for your Kubernetes clusters. It automatically builds logical topologies of your application and infrastructure, which enable your SRE and Ops team to intuitively understand, monitor, and control your containerized, microservices based application. Simply deploy our containerized application directly into your Kubernetes cluster. 
 
+# spekt8
+
+## Le namespace
+
+Si vous n'avez pas encore de namespace pour installer spekt8, en créer un :
+
+```
+kubectl create namespace poc-bruno
+```
+
+Vérifier qu'il a bien été créé :
+
+```
+kubectl get namespaces
+```
+
+## Le contexte
+
+Si vous n'avez pas encore de contexte, en créer un :
+
+```
+kubectl config set-context poc-bruno-spekt8 --cluster=kubernetes --user=kubernetes-admin --namespace=poc-bruno
+kubectl config use-context poc-bruno-spekt8
+```
+
+Vérifier le contexte actif :
+
+```
+kubectl config get-contexts
+```
+
+Vérifier qu'on est connecté :
+
+```
+kubectl cluster-info
+```
+
+### Cas où il manque des hôtes dans le fichier /etc/hosts
+
+Au besoin, dans le fichier /etc/hosts, ajouter la ligne suivante :
+
+```
+192.168.122.72 intr-devops-pockube-vm2
+```
+
+## Le déploiement
+
+Modifier éventuellement le déploiement :
+
+```
+cat spekt8-deployment.yaml
+```
+
+```
+cat fabric8-rbac.yaml
+```
+
+## Ajout de Kustomize
+
+Créer un fichier kustomization.yaml :
+
+```
+touch kustomization.yaml
+```
+
+Corrige le fichier pour initialiser son contenu :
+
+```
+kustomize edit fix
+```
+
+Ajouter les fichiers deux ressources de spekt8 :
+
+```
+kustomize edit add resource spekt8-deployment.yaml fabric8-rbac.yaml
+```
+
+Afficher le résultat :
+
+```
+kustomize build
+```
+
+Dans une fenêtre, afficher la liste des pods :
+
+```
+watch kubectl -n poc-bruno get pods -l component=spekt8
+```
+
+
+Dans une autre fenêtre, afficher les logs :
+
+```
+stern -n poc-bruno -l component=spekt8
+```
+
+Appliquer la ressource Kustomize que l'on vient de créer :
+
+```
+kubectl apply -k .
+```
+
+Afficher la liste des pods :
+
+```
+kubectl get pods
+```
+
+Afficher la liste des services :
+
+```
+kubectl get svc
+```
+
+## Créer un service
+
+```
+vi spekt8-service.yaml
+```
+
+Y ajouter ce contenu :
+
+```
+apiVersion: v1
+kind: Service
+metadata:
+  name: spekt8
+  namespace: poc-bruno
+spec:
+  type: NodePort
+  selector:
+    component: spekt8
+  ports:
+    - port: 3000
+      protocol: TCP
+      nodePort: 30432
+```
+
+Ajouter ce nouveau fichier à Kustomize :
+
+```
+kustomize edit add resource spekt8-service.yaml
+```
+
+Appliquer la ressource Kustomize :
+
+```
+kubectl apply -k .
+```
+
+Pour information, cette ligne équivaut à :
+
+```
+kustomize build | kubectl apply -f -
+```
+
+Afficher la liste des services :
+
+```
+kubectl get svc
+```
+
+Vérifier que le service est accessible depuis la machine :
+
+```
+curl http://intr-devops-pockube-vm2:3000
+```
+
+Hors de la machine, dans un navigateur, aller à l'adresse :
+
+```
+http://intr-devops-pockube-vm2:30432
+```
+
+Pour tout désinstaller :
+
+```
+kubectl delete -k .
+```
+
+
+
+
+
+
 <img src="https://github.com/spekt8/spekt8/blob/master/spekt8-preview.gif" width="600" height="300" />
 
 When your app is running in Kubernetes, our visualization tool will display all the Pods, Services, and Ingresses that allow you to drill down on Kubernetes clusters. The information provided to you includes but is not limited to the following:
